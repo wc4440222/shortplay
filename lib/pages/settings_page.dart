@@ -8,8 +8,6 @@ import '../services/app_update_service.dart';
 import '../services/download_service.dart';
 import '../services/device_profile.dart';
 import '../widgets/tv_tap.dart';
-import '../widgets/app_notice.dart';
-import '../widgets/app_update_dialog.dart';
 import 'share_link_page.dart';
 import 'tv_share_link_page.dart';
 
@@ -31,43 +29,12 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   late final Future<String> _appVersion = loadAppVersion();
-  late final AppUpdateService _updates =
-      widget.appUpdateService ?? AppUpdateService(apiClient: widget.apiClient);
   final CancelToken _checkCancelToken = CancelToken();
-  bool _checking = false;
 
   @override
   void dispose() {
     _checkCancelToken.cancel('关闭设置页面');
     super.dispose();
-  }
-
-  Future<void> _checkForUpdates() async {
-    if (_checking) return;
-    setState(() => _checking = true);
-    try {
-      final update = await _updates.check(cancelToken: _checkCancelToken);
-      if (!mounted) return;
-      setState(() => _checking = false);
-      if (update == null) {
-        showAppNotice(context, message: '当前已是最新版本');
-        return;
-      }
-      await showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => AppUpdateDialog(update: update, service: _updates),
-      );
-    } catch (error) {
-      if (mounted) {
-        showAppNotice(context,
-            message: '检查更新失败',
-            detail: appUpdateError(error),
-            kind: AppNoticeKind.error);
-      }
-    } finally {
-      if (mounted) setState(() => _checking = false);
-    }
   }
 
   Widget _buildTvSettings() {
@@ -104,7 +71,7 @@ class _SettingsPageState extends State<SettingsPage> {
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                        Text('龙龙短剧',
+                        Text('大嘴短剧',
                             style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.w600,
@@ -137,18 +104,6 @@ class _SettingsPageState extends State<SettingsPage> {
                           builder: (_) => TvShareLinkPage(
                               apiClient: widget.apiClient,
                               downloadService: widget.downloadService)))),
-              const SizedBox(height: 12),
-              _TvSettingsRow(
-                  icon: Icons.update_rounded,
-                  title: _checking ? '正在检查更新…' : '检查更新',
-                  subtitle: '获取最新版本，体验更多改进',
-                  onTap: _checkForUpdates,
-                  trailing: _checking
-                      ? const SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2))
-                      : null),
             ],
           ),
         ),
@@ -198,18 +153,6 @@ class _SettingsPageState extends State<SettingsPage> {
                           color: Color(0xFFEEEEEE),
                         ),
                         _SettingsRow(
-                          icon: Icons.update_rounded,
-                          title: _checking ? '正在检查更新…' : '检查更新',
-                          onTap: _checking ? null : _checkForUpdates,
-                        ),
-                        const Divider(
-                          height: 1,
-                          thickness: 0.5,
-                          indent: 64,
-                          endIndent: 20,
-                          color: Color(0xFFEEEEEE),
-                        ),
-                        _SettingsRow(
                           icon: Icons.info_outline_rounded,
                           title: '软件版本',
                           trailing: FutureBuilder<String>(
@@ -219,6 +162,25 @@ class _SettingsPageState extends State<SettingsPage> {
                               style: const TextStyle(
                                   fontSize: 14, color: Color(0xFF999999)),
                             ),
+                          ),
+                        ),
+                        const Divider(
+                          height: 1,
+                          thickness: 0.5,
+                          indent: 64,
+                          endIndent: 20,
+                          color: Color(0xFFEEEEEE),
+                        ),
+                        _SettingsRow(
+                          icon: Icons.description_outlined,
+                          title: '开源许可',
+                          onTap: () => showAboutDialog(
+                            context: context,
+                            applicationName: '大嘴短剧',
+                            applicationLegalese: '本软件基于开源项目 Erlmo/shortplay 深度改造，'
+                                '遵循 MIT 许可协议发布，仅供个人学习与个人使用。\n\n'
+                                '原项目：https://github.com/Erlmo/shortplay\n'
+                                'MIT License：Copyright (c) Erlmo',
                           ),
                         ),
                       ],
@@ -267,7 +229,7 @@ class _SettingsHeader extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      '龙龙短剧',
+                      '大嘴短剧',
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.w600,
@@ -325,14 +287,12 @@ class _TvSettingsRow extends StatelessWidget {
       {required this.icon,
       required this.title,
       required this.subtitle,
-      required this.onTap,
-      this.trailing});
+      required this.onTap});
 
   final IconData icon;
   final String title;
   final String subtitle;
   final VoidCallback onTap;
-  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -369,8 +329,7 @@ class _TvSettingsRow extends StatelessWidget {
                     style: const TextStyle(
                         fontSize: 12, color: Color(0xFF747B88))),
               ])),
-          trailing ??
-              const Icon(Icons.chevron_right_rounded, color: Color(0xFFA4AAB5)),
+          const Icon(Icons.chevron_right_rounded, color: Color(0xFFA4AAB5)),
         ]),
       ),
     );

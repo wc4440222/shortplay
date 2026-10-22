@@ -543,7 +543,7 @@ class _HomeFeedPageState extends State<_HomeFeedPage>
             const Icon(Icons.play_circle_filled_rounded,
                 size: 27, color: Color(0xFFFF2442)),
             const SizedBox(width: 9),
-            const Text('龙龙短剧',
+            const Text('大嘴短剧',
                 style: TextStyle(
                   color: Color(0xFF242833),
                   fontSize: 20,

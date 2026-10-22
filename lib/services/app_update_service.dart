@@ -16,8 +16,16 @@ class AppUpdateService extends ChangeNotifier {
 
   AppUpdate? get requiredUpdate => _requiredUpdate;
 
+  /// 大嘴短剧 OEM 版：不连接上游更新服务。
+  ///
+  /// 置为 false 后：AppUpdateGate 的启动/回前台自动检查直接跳过，
+  /// 服务端即使把某个版本标记为强制更新也不会再弹出拦截页。
+  /// 需要恢复上游更新时把这里改回 false 即可。
+  static const bool oemBuild = true;
+
   bool get isSupported =>
       !kIsWeb &&
+      !oemBuild &&
       (defaultTargetPlatform == TargetPlatform.android ||
           defaultTargetPlatform == TargetPlatform.iOS);
 

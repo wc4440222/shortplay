@@ -1,4 +1,4 @@
-package com.example.shortplay
+package com.dazui.shortplay
 
 import android.app.UiModeManager
 import android.content.Context
