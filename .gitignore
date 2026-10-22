@@ -62,3 +62,6 @@ CODEX.md
 
 # Native crypto core: source not distributed (only prebuilt binaries are shipped)
 /native/
+
+# 构建产物
+android/build/
