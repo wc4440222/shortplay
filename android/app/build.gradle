@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.dazui.shortplay"
+    namespace = "com.example.shortplay"
     compileSdk = 36
     ndkVersion = flutter.ndkVersion
 
@@ -54,6 +54,12 @@ android {
     // 插件会在其后重新注入全部 ABI 的引擎库（libflutter/libapp 等），覆盖掉
     // 过滤。必须用 packagingOptions.jniLibs.excludes，它在打包最后阶段按路径
     // 排除，对所有 .so（含引擎库）都生效。
+    //
+    // ⚠️ namespace 必须保持 com.example.shortplay：预编译的
+    // libshortplay_crypto.so 里 JNI 符号写死为
+    // Java_com_example_shortplay_CryptoNative_*，改了包名会导致
+    // UnsatisfiedLinkError，播放时直接闪退。
+    // 需要换安装包名时只改 applicationId，不要动 namespace 和 Kotlin 包名。
     //
     // 发布时用 `flutter build apk --split-per-abi` 按架构拆成两个 APK，
     // 各自体积与原来单架构包相当；不拆的话一个包同时含 32/64 位，体积更大。

@@ -1,4 +1,4 @@
-package com.dazui.shortplay
+package com.example.shortplay
 
 import android.util.Log
 import androidx.annotation.Keep

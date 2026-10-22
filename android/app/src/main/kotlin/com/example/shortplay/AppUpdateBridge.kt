@@ -1,4 +1,4 @@
-package com.dazui.shortplay
+package com.example.shortplay
 
 import android.app.Activity
 import android.content.ActivityNotFoundException

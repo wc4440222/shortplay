@@ -26,15 +26,21 @@ class ShareLinkResolver {
 
   /// 候选 id 的参数名，顺序即优先级。
   ///
-  /// - video_id：剧 / 作品 id
+  /// - video_id：剧 / 作品 id（video-animation-share 形态）
+  /// - video_series_id：剧 / 系列 id（video-list-share-ssr 形态）
+  /// - book_id：番茄小说 / 短剧的书籍 id
   /// - vid：分集 id
   /// - share_toast_vid：分享弹窗用的 id（可能与 vid 不同）
-  /// - book_id：番茄小说 / 短剧的书籍 id
+  ///
+  /// 剧目类 id 排在前面：App 里 `/nove/directory?book_id=` 用的就是番茄的
+  /// series_id，与 video_id / video_series_id 是同一个东西；
+  /// vid / share_toast_vid 是分集 id，排在后面兜底。
   static const List<String> idKeys = [
     'video_id',
+    'video_series_id',
+    'book_id',
     'vid',
     'share_toast_vid',
-    'book_id',
   ];
 
   /// 从分享文本《剧名》中提取剧名（本地兜底用，服务端通常也会返回）。
